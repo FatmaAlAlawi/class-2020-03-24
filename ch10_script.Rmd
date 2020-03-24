@@ -77,7 +77,14 @@ train %>%
 
 **Prompt:**  Calculate a 95% confidence interval for the difference between the mean income of treated and control commuters in our sample. Provide a Bayesian and Frequentist interpretation of this interval.
 ```{r}
-
+train %>%
+  rep_sample_n(115, replace = TRUE, reps = 1000) %>%
+  group_by(treatment, replicate) %>%
+  summarize(mean_income = mean(income)) %>%
+  pivot_wider(names_from = treatment, values_from = mean_income) %>%
+  mutate(diff = Treated - Control) %>%
+  pull(diff) %>%
+  quantile(c(.025, .975))
 ```
 
 # Scene 8
